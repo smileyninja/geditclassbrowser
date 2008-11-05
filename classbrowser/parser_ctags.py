@@ -121,7 +121,7 @@ class CTagsParser( ClassParserInterface ):
         # A list of lists. Matches the order found in tag files.
         # identifier, path to file, line number, type, and then more magical things
         tokenlist = [] 
-        h = open(tmpfile)
+        h = os.fdopen(tmpfile)
         for r in h.readlines():
             tokens = r.strip().split("\t")
             if tokens[0][:2] == "!_": continue
