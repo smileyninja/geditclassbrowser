@@ -86,7 +86,9 @@ class CTagsParser( ClassParserInterface ):
         # and the fs understand it.
         arg = arg.replace(" ","\ ")
         
-        if filename.find(".vala") :
+        print filename.find(".vala")
+        
+        if filename.find(".vala") >= 0:
              return self._generate_tagfile(docpath, "-n --language-force=C#")                
         else:         
              return self._generate_tagfile(arg,options)
@@ -101,6 +103,7 @@ class CTagsParser( ClassParserInterface ):
         
         # launch ctags
         command = "ctags %s -f %s %s"%(options,tmpfile,filestr)
+        print "command: %s"%command
         os.system(command)
         
         return tmpfile
@@ -121,7 +124,7 @@ class CTagsParser( ClassParserInterface ):
         # A list of lists. Matches the order found in tag files.
         # identifier, path to file, line number, type, and then more magical things
         tokenlist = [] 
-        h = os.fdopen(tmpfile)
+        h = open(tmpfile)
         for r in h.readlines():
             tokens = r.strip().split("\t")
             if tokens[0][:2] == "!_": continue
@@ -233,6 +236,7 @@ class CTagsParser( ClassParserInterface ):
 		F	file name
 		g	enumeration name
 		m	member (of structure or class data)
+		n	namespace
 		p	function prototype
 		s	structure name
 		t	typedef
@@ -268,7 +272,7 @@ class CTagsParser( ClassParserInterface ):
         """ class, enumerations, structs and unions are considerer containers.
             See Issue 13 for some issues we had with this.
         """
-        if self.__get_type(tokrow) in 'cgsut': return True
+        if self.__get_type(tokrow) in 'cgnsut': return True
         return False
         
         
@@ -290,6 +294,7 @@ class CTagsParser( ClassParserInterface ):
         ctr.set_property("text", i)
         elements = {
             "c":"class",
+            "s":"class",
             "f":"function",
             "m":"member",
             "e":"enumerator",
